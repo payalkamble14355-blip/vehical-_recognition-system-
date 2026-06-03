@@ -33,10 +33,10 @@ def load_model():
 
 CLASSES = ['Bus', 'Car', 'Motorcycle', 'Truck']
 CLASS_COLORS = {
-    'Bus':        '#FF8C00',
-    'Car':        '#2ECC71',
-    'Motorcycle': '#3498DB',
-    'Truck':      '#E74C3C',
+    'Bus':        '#ffb6c1',   # light pink
+    'Car':        '#fffacd',   # lemon chiffon
+    'Motorcycle': '#98fb98',   # pale green
+    'Truck':      '#87cefa',   # light sky blue
 }
 CLASS_ICONS = {
     'Bus': '🚌',
