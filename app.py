@@ -4,7 +4,6 @@ import numpy as np
 from PIL import Image
 import tempfile
 import os
-import time
 import io
 import pandas as pd
 from pathlib import Path
@@ -226,6 +225,33 @@ st.markdown("""
         padding: 10px;
     }
 
+    /* ── Dataset sample card ── */
+    .ds-card {
+        background: #1a1d2e;
+        border: 1px solid #2d3561;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .ds-card:hover { transform: translateY(-3px); border-color: #4a5890; }
+    .ds-card-label {
+        padding: 8px 10px;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .ds-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-family: 'Space Mono', monospace;
+        font-weight: 700;
+    }
+
     /* ── Metric card (about page) ── */
     .tech-chip {
         background: #1a1d2e;
@@ -246,7 +272,7 @@ with st.sidebar:
     st.markdown("---")
     mode = st.radio(
         "Mode",
-        ["📷 Image", "🖼️ Batch", "🎬 Video", "📈 Training Curves", "ℹ️ About"],
+        ["📷 Image", "🖼️ Batch", "📈 Training Curves", "🗂️ Dataset", "ℹ️ About"],
         label_visibility="collapsed"
     )
     st.markdown("---")
@@ -509,117 +535,6 @@ elif mode == "🖼️ Batch":
         """, unsafe_allow_html=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# MODE: VIDEO
-# ══════════════════════════════════════════════════════════════════════════════
-elif mode == "🎬 Video":
-    uploaded_video = st.file_uploader(
-        "Upload a video file",
-        type=["mp4", "avi", "mov", "mkv"],
-        label_visibility="collapsed"
-    )
-
-    if uploaded_video:
-        model = load_model()
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_in:
-            tmp_in.write(uploaded_video.read())
-            tmp_in_path = tmp_in.name
-
-        output_path = tmp_in_path.replace(".mp4", "_output.mp4")
-
-        cap = cv2.VideoCapture(tmp_in_path)
-        fps = cap.get(cv2.CAP_PROP_FPS) or 25
-        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
-
-        FONT = cv2.FONT_HERSHEY_DUPLEX
-        CLASS_COLORS_BGR = {
-            'Bus':        (50, 140, 255),
-            'Car':        (50, 200, 50),
-            'Motorcycle': (219, 152, 52),
-            'Truck':      (52, 94, 235),
-        }
-
-        st.markdown("**Processing video...**")
-        progress = st.progress(0)
-        status = st.empty()
-        count = 0
-        frame_log = []  # track per-frame predictions for a timeline
-
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-            count += 1
-
-            gray3 = cv2.cvtColor(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2BGR)
-            result = model.predict(gray3, imgsz=224, verbose=False)[0]
-            probs_arr = result.probs.data.cpu().numpy()
-            pred_idx = int(probs_arr.argmax())
-            pred_conf = float(probs_arr.max())
-            pred_name = model.names[pred_idx]
-            label = f"{pred_name}  {pred_conf*100:.1f}%"
-            color = CLASS_COLORS_BGR.get(pred_name, (200, 200, 200))
-
-            cv2.putText(frame, label, (20, 50), FONT, 1.2, (0, 0, 0), 4, cv2.LINE_AA)
-            cv2.putText(frame, label, (20, 50), FONT, 1.2, color, 2, cv2.LINE_AA)
-            out.write(frame)
-            frame_log.append((count / fps, pred_name, pred_conf))
-
-            if count % 10 == 0:
-                progress.progress(min(count / max(total, 1), 1.0))
-                status.text(f"Frame {count}/{total}")
-
-        cap.release()
-        out.release()
-        os.unlink(tmp_in_path)
-        progress.progress(1.0)
-        status.text(f"✅ Done! Processed {count} frames.")
-
-        # ── Post-video stats ──────────────────────────────────────────────────
-        if frame_log:
-            st.markdown("---")
-            st.markdown('<p class="section-header">Video Analysis</p>', unsafe_allow_html=True)
-
-            times   = [x[0] for x in frame_log]
-            preds   = [x[1] for x in frame_log]
-            confs   = [x[2] for x in frame_log]
-
-            # Confidence timeline
-            fig, ax = plt.subplots(figsize=(8, 2.5))
-            for cls in CLASSES:
-                mask = [i for i, p in enumerate(preds) if p == cls]
-                if mask:
-                    ax.scatter([times[i] for i in mask], [confs[i] for i in mask],
-                               s=8, label=cls, color=CLASS_COLORS[cls], alpha=0.7)
-            ax.set_xlabel("Time (s)")
-            ax.set_ylabel("Confidence")
-            ax.set_title("Per-Frame Confidence Timeline")
-            ax.legend(fontsize=8, labelcolor=PLT_TEXT, facecolor=PLT_SURFACE, edgecolor=PLT_BORDER)
-            apply_dark_theme(fig, [ax])
-            st.pyplot(fig, use_container_width=True)
-            plt.close(fig)
-
-        with open(output_path, "rb") as f:
-            st.download_button(
-                "⬇️ Download Processed Video",
-                f,
-                file_name="vehicle_output.mp4",
-                mime="video/mp4",
-                use_container_width=True,
-            )
-        os.unlink(output_path)
-    else:
-        st.markdown("""
-        <div style="text-align:center; padding: 60px 20px; color:#3a4060;">
-            <p style="font-size:3rem">🎬</p>
-            <p style="font-family:'Space Mono',monospace; font-size:0.9rem; letter-spacing:0.1em;">UPLOAD A VIDEO TO PROCESS</p>
-        </div>
-        """, unsafe_allow_html=True)
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MODE: TRAINING CURVES
@@ -808,7 +723,7 @@ elif mode == "ℹ️ About":
         st.markdown("### Project Summary")
         st.markdown("""
         This system uses **YOLOv8s-cls** fine-tuned on a vehicle dataset to classify
-        images and video frames into four categories in real time.
+        images into four categories in real time.
 
         **Pipeline:**
         1. Input image/frame → grayscale preprocessing
