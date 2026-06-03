@@ -272,7 +272,7 @@ with st.sidebar:
     st.markdown("---")
     mode = st.radio(
         "Mode",
-        ["📷 Image", "🖼️ Batch", "📈 Training Curves", "🗂️ Dataset", "ℹ️ About"],
+        ["🏠 Home", "📷 Image", "🖼️ Batch", "📈 Training Curves", "🗂️ Dataset", "ℹ️ About"],
         label_visibility="collapsed"
     )
     st.markdown("---")
@@ -317,9 +317,181 @@ st.markdown("---")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# MODE: HOME
+# ══════════════════════════════════════════════════════════════════════════════
+if mode == "🏠 Home":
+    # ── Hero ──────────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 60%, #16213e 100%);
+        border: 1px solid #2d3561;
+        border-radius: 20px;
+        padding: 52px 48px 44px;
+        text-align: center;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    ">
+        <div style="
+            position: absolute; top: -40px; left: -40px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, #3498DB22 0%, transparent 70%);
+            border-radius: 50%;
+        "></div>
+        <div style="
+            position: absolute; bottom: -40px; right: -40px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, #E74C3C22 0%, transparent 70%);
+            border-radius: 50%;
+        "></div>
+        <p style="font-size:4rem; margin:0 0 12px 0; line-height:1;">🚗</p>
+        <h1 style="
+            font-family:'Space Mono',monospace;
+            font-size:2.2rem;
+            font-weight:700;
+            color:#c8cfe8;
+            margin:0 0 10px 0;
+            letter-spacing:-0.02em;
+        ">Vehicle Recognition System</h1>
+        <p style="
+            color:#5a6080;
+            font-family:'Space Mono',monospace;
+            font-size:0.78rem;
+            letter-spacing:0.18em;
+            margin:0 0 24px 0;
+        ">YOLOV8S-CLS &nbsp;·&nbsp; BUS &nbsp;·&nbsp; CAR &nbsp;·&nbsp; MOTORCYCLE &nbsp;·&nbsp; TRUCK</p>
+        <p style="color:#a0a8c0; font-size:1rem; max-width:560px; margin:0 auto; line-height:1.7;">
+            A deep learning system that classifies vehicle images into four categories
+            in real time using a fine-tuned YOLOv8s classification model.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Quick-stats row ───────────────────────────────────────────────────────
+    qs = st.columns(4)
+    quick_stats = [
+        ("8,863",  "Total Images",    "#3498DB"),
+        ("4",      "Classes",         "#2ECC71"),
+        ("224px",  "Input Size",      "#FF8C00"),
+        ("70/15/15", "Train/Val/Test", "#E74C3C"),
+    ]
+    for col, (val, lbl, color) in zip(qs, quick_stats):
+        col.markdown(f"""
+        <div class="stat-box" style="border-color:{color}44;">
+            <div class="stat-number" style="color:{color}; font-size:1.6rem;">{val}</div>
+            <div class="stat-label">{lbl}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+
+    # ── Feature cards ─────────────────────────────────────────────────────────
+    st.markdown('<p class="section-header">What you can do</p>', unsafe_allow_html=True)
+    fc = st.columns(4)
+    features = [
+        ("📷", "Image",          "Upload a single image and get an instant classification with confidence scores and probability bars.", "#3498DB"),
+        ("🖼️", "Batch",          "Predict on multiple images at once. Export results to CSV and see class distribution at a glance.",   "#2ECC71"),
+        ("📈", "Training Curves","Upload your YOLOv8 results.csv to visualise loss, accuracy, and learning-rate curves over epochs.",    "#FF8C00"),
+        ("🗂️", "Dataset",        "Explore the dataset composition — class counts, train/val/test splits, and proportion charts.",        "#E74C3C"),
+    ]
+    for col, (icon, title, desc, color) in zip(fc, features):
+        col.markdown(f"""
+        <div style="
+            background: linear-gradient(160deg, #1a1d2e 0%, #16213e 100%);
+            border: 1px solid {color}44;
+            border-top: 3px solid {color};
+            border-radius: 14px;
+            padding: 22px 18px;
+            height: 100%;
+            transition: transform 0.2s;
+        ">
+            <p style="font-size:1.8rem; margin:0 0 10px 0;">{icon}</p>
+            <p style="
+                font-family:'Space Mono',monospace;
+                font-size:0.85rem;
+                font-weight:700;
+                color:{color};
+                margin:0 0 8px 0;
+                letter-spacing:0.05em;
+            ">{title}</p>
+            <p style="color:#7b84a8; font-size:0.82rem; line-height:1.6; margin:0;">{desc}</p>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+
+    # ── Class showcase ────────────────────────────────────────────────────────
+    st.markdown('<p class="section-header">Supported Classes</p>', unsafe_allow_html=True)
+    cc = st.columns(4)
+    class_descs = {
+        'Bus':        "City buses, coaches, school buses, and other large passenger transit vehicles.",
+        'Car':        "Sedans, SUVs, hatchbacks, coupes — standard four-wheeled passenger cars.",
+        'Motorcycle': "Two-wheelers including motorbikes, scooters, and sport motorcycles.",
+        'Truck':      "Pickup trucks, lorries, freight trucks, and other heavy commercial vehicles.",
+    }
+    for col, cls in zip(cc, CLASSES):
+        color = CLASS_COLORS[cls]
+        icon  = CLASS_ICONS[cls]
+        col.markdown(f"""
+        <div style="
+            background:#1a1d2e;
+            border:1px solid #2d3561;
+            border-radius:12px;
+            padding:20px 16px;
+            text-align:center;
+        ">
+            <p style="font-size:2.4rem; margin:0 0 8px 0;">{icon}</p>
+            <p style="
+                font-family:'Space Mono',monospace;
+                font-size:0.9rem;
+                font-weight:700;
+                color:{color};
+                margin:0 0 8px 0;
+            ">{cls}</p>
+            <p style="color:#5a6080; font-size:0.78rem; line-height:1.55; margin:0;">{class_descs[cls]}</p>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+
+    # ── Pipeline ──────────────────────────────────────────────────────────────
+    st.markdown('<p class="section-header">How it works</p>', unsafe_allow_html=True)
+    steps = [
+        ("01", "Upload",     "Drop an image or batch of images into the app.",              "#3498DB"),
+        ("02", "Preprocess", "Frames are converted to grayscale and resized to 224×224.",   "#9B59B6"),
+        ("03", "Infer",      "YOLOv8s-cls runs a forward pass and outputs class logits.",   "#FF8C00"),
+        ("04", "Result",     "Softmax probabilities are ranked and displayed with labels.", "#2ECC71"),
+    ]
+    pipe_cols = st.columns(len(steps))
+    for col, (num, title, desc, color) in zip(pipe_cols, steps):
+        col.markdown(f"""
+        <div style="
+            background:#1a1d2e;
+            border:1px solid #2d3561;
+            border-radius:12px;
+            padding:18px 14px;
+            text-align:center;
+            position:relative;
+        ">
+            <p style="
+                font-family:'Space Mono',monospace;
+                font-size:1.6rem;
+                font-weight:700;
+                color:{color}33;
+                margin:0 0 6px 0;
+                line-height:1;
+            ">{num}</p>
+            <p style="
+                font-family:'Space Mono',monospace;
+                font-size:0.82rem;
+                font-weight:700;
+                color:{color};
+                margin:0 0 6px 0;
+            ">{title}</p>
+            <p style="color:#5a6080; font-size:0.77rem; line-height:1.55; margin:0;">{desc}</p>
+        </div>""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
 # MODE: SINGLE IMAGE
 # ══════════════════════════════════════════════════════════════════════════════
-if mode == "📷 Image":
+elif mode == "📷 Image":
     uploaded = st.file_uploader(
         "Drop a vehicle image here",
         type=["jpg", "jpeg", "png", "bmp", "webp"],
@@ -712,6 +884,128 @@ elif mode == "📈 Training Curves":
             </p>
         </div>
         """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MODE: DATASET
+# ══════════════════════════════════════════════════════════════════════════════
+elif mode == "🗂️ Dataset":
+    st.markdown("### Dataset Overview")
+    st.markdown("<p style='color:#5a6080;'>Class distribution across the training split (~4,081 images).</p>", unsafe_allow_html=True)
+    st.markdown("---")
+
+    # ── Hardcoded train-split counts from the dataset ─────────────────────────
+    DATASET_COUNTS = {
+        'Bus':        1358,
+        'Car':        700,
+        'Motorcycle': 845,
+        'Truck':      1178,
+    }
+    total_train = sum(DATASET_COUNTS.values())
+
+    # ── Summary stat boxes ────────────────────────────────────────────────────
+    st.markdown('<p class="section-header">Train Split Stats</p>', unsafe_allow_html=True)
+    sc = st.columns(5)
+    summary_stats = [
+        (str(total_train), "Total Images"),
+        (str(DATASET_COUNTS['Bus']),        "Bus"),
+        (str(DATASET_COUNTS['Car']),        "Car"),
+        (str(DATASET_COUNTS['Motorcycle']), "Motorcycle"),
+        (str(DATASET_COUNTS['Truck']),      "Truck"),
+    ]
+    stat_colors = ["#c8cfe8", CLASS_COLORS['Bus'], CLASS_COLORS['Car'], CLASS_COLORS['Motorcycle'], CLASS_COLORS['Truck']]
+    for col, (val, lbl), color in zip(sc, summary_stats, stat_colors):
+        col.markdown(f"""
+        <div class="stat-box">
+            <div class="stat-number" style="color:{color}">{val}</div>
+            <div class="stat-label">{lbl}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ── Side-by-side: bar chart + pie chart ───────────────────────────────────
+    chart_col1, chart_col2 = st.columns([3, 2], gap="large")
+
+    classes  = list(DATASET_COUNTS.keys())
+    counts   = list(DATASET_COUNTS.values())
+    colors   = [CLASS_COLORS[c] for c in classes]
+
+    with chart_col1:
+        st.markdown('<p class="section-header">Images per Class</p>', unsafe_allow_html=True)
+        fig, ax = plt.subplots(figsize=(6, 4))
+        bars = ax.bar(classes, counts, color=colors, edgecolor=PLT_BG, linewidth=1.5, width=0.55)
+        for bar, count in zip(bars, counts):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 18,
+                str(count),
+                ha='center', va='bottom',
+                color=PLT_TEXT, fontsize=10,
+                fontfamily='monospace', fontweight='bold'
+            )
+        ax.set_ylabel("Count")
+        ax.set_title("Dataset Class Distribution (Train Split)", pad=14)
+        ax.set_ylim(0, max(counts) * 1.15)
+        apply_dark_theme(fig, [ax])
+        st.pyplot(fig, use_container_width=True)
+        plt.close(fig)
+
+    with chart_col2:
+        st.markdown('<p class="section-header">Class Proportion</p>', unsafe_allow_html=True)
+        proportions = [c / total_train for c in counts]
+        fig2, ax2 = plt.subplots(figsize=(4.2, 4))
+        wedges, texts, autotexts = ax2.pie(
+            counts,
+            labels=classes,
+            colors=colors,
+            autopct='%1.1f%%',
+            startangle=140,
+            textprops={'color': PLT_TEXT, 'fontsize': 9},
+            wedgeprops={'edgecolor': PLT_BG, 'linewidth': 2},
+            pctdistance=0.65,
+        )
+        for at in autotexts:
+            at.set_color(PLT_BG)
+            at.set_fontweight('bold')
+            at.set_fontsize(9)
+        ax2.set_title("Class Proportion", color=PLT_TEXT, pad=10)
+        apply_dark_theme(fig2, [ax2])
+        ax2.set_facecolor(PLT_BG)
+        st.pyplot(fig2, use_container_width=True)
+        plt.close(fig2)
+
+    # ── Dataset split breakdown ───────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown('<p class="section-header">Dataset Split</p>', unsafe_allow_html=True)
+
+    TOTAL_DATASET = 8863
+    split_data = {
+        "Train": (0.70, "#3498DB"),
+        "Val":   (0.15, "#2ECC71"),
+        "Test":  (0.15, "#E74C3C"),
+    }
+    sp_cols = st.columns(3)
+    for col, (split_name, (ratio, color)) in zip(sp_cols, split_data.items()):
+        n = int(TOTAL_DATASET * ratio)
+        col.markdown(f"""
+        <div class="stat-box">
+            <div class="stat-number" style="color:{color}">{n:,}</div>
+            <div class="stat-label">{split_name} ({int(ratio*100)}%)</div>
+        </div>""", unsafe_allow_html=True)
+
+    # Stacked split bar
+    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+    bar_html = "<div style='display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;margin-top:8px;'>"
+    for split_name, (ratio, color) in split_data.items():
+        bar_html += f"<div style='flex:{ratio};background:{color};border-radius:7px;' title='{split_name}'></div>"
+    bar_html += "</div>"
+    st.markdown(bar_html, unsafe_allow_html=True)
+    # legend
+    legend_html = "<div style='display:flex;gap:20px;margin-top:8px;'>"
+    for split_name, (ratio, color) in split_data.items():
+        legend_html += f"<span style='font-size:0.75rem;color:{color};font-family:Space Mono,monospace;'>■ {split_name} {int(ratio*100)}%</span>"
+    legend_html += "</div>"
+    st.markdown(legend_html, unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
