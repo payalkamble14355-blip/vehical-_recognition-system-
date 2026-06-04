@@ -33,10 +33,10 @@ def load_model():
 
 CLASSES = ['Bus', 'Car', 'Motorcycle', 'Truck']
 CLASS_COLORS = {
-    'Bus':        '#FF3300',   # brutal red
-    'Car':        '#FFEE00',   # brutal yellow
-    'Motorcycle': '#00FFAA',   # brutal green
-    'Truck':      '#FF00AA',   # brutal pink
+    'Bus':        '#ffb6c1',   # light pink
+    'Car':        '#fffacd',   # lemon chiffon
+    'Motorcycle': '#98fb98',   # pale green
+    'Truck':      '#87cefa',   # light sky blue
 }
 CLASS_ICONS = {
     'Bus': '🚌',
@@ -46,21 +46,21 @@ CLASS_ICONS = {
 }
 
 # ── Plot theme helper ──────────────────────────────────────────────────────────
-PLT_BG       = "#0A0A0A"
-PLT_SURFACE  = "#111111"
-PLT_BORDER   = "#333333"
-PLT_TEXT     = "#FFFFFF"
-PLT_SUBTEXT  = "#555555"
+PLT_BG       = "#0a0e1a"
+PLT_SURFACE  = "#0d1526"
+PLT_BORDER   = "#00e5ff"
+PLT_TEXT     = "#00e5ff"
+PLT_SUBTEXT  = "#1a4a5a"
 
 CURVE_COLORS = {
-    "train": "#FF3300",
-    "val":   "#FFEE00",
-    "top1":  "#00FFAA",
-    "top3":  "#FF00AA",
-    "bus":   "#FF3300",
-    "car":   "#FFEE00",
-    "motorcycle": "#00FFAA",
-    "truck": "#FF00AA",
+    "train": "#00e5ff",
+    "val":   "#7b2fff",
+    "top1":  "#00e5ff",
+    "top3":  "#7b2fff",
+    "bus":   "#00e5ff",
+    "car":   "#7b2fff",
+    "motorcycle": "#00ffaa",
+    "truck": "#ff6ec7",
 }
 
 def apply_dark_theme(fig, ax_list):
@@ -78,132 +78,177 @@ def apply_dark_theme(fig, ax_list):
 # ── Custom CSS ─────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap');
 
-    html, body, [class*="css"] { font-family: 'Space Grotesk', sans-serif; }
-    h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
+    html, body, [class*="css"] {
+        font-family: 'Rajdhani', sans-serif;
+        color: #a8d8e8;
+        background-color: #0a0e1a;
+    }
+    h1, h2, h3 { font-family: 'Orbitron', monospace; color: #00e5ff; }
 
-    .main { background-color: #0A0A0A; }
-    .stApp { background-color: #0A0A0A; }
+    .main  { background-color: #0a0e1a; }
+    .stApp { background-color: #0a0e1a; }
 
-    /* ── Prediction card ── */
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background: #060a14 !important;
+        border-right: 1px solid #00e5ff22 !important;
+    }
+    [data-testid="stSidebar"] * { color: #a8d8e8 !important; }
+    [data-testid="stSidebar"] hr { border-color: #00e5ff22 !important; }
+    [data-testid="stSidebar"] label {
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 0.9rem !important;
+        letter-spacing: 0.06em !important;
+    }
+
+    /* Slider */
+    [data-testid="stSlider"] > div > div > div { background: #00e5ff !important; }
+
+    hr { border-color: #00e5ff22 !important; }
+
+    /* ── Prediction card — glowing cyan box ── */
     .pred-card {
-        background: #111111;
-        border: 3px solid #FFFFFF;
-        border-radius: 0;
-        padding: 28px 24px;
+        background: linear-gradient(145deg, #0d1a2e 0%, #061020 100%);
+        border: 2px solid #00e5ff;
+        border-radius: 16px;
+        padding: 36px 28px;
         margin: 12px 0;
         text-align: center;
-        animation: fadeSlideIn 0.3s ease;
-        outline: 6px solid #0A0A0A;
-        outline-offset: -9px;
+        box-shadow:
+            0 0 20px #00e5ff55,
+            0 0 60px #00e5ff22,
+            inset 0 0 30px #00e5ff08;
+        animation: fadeSlideIn 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .pred-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 10%; right: 10%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00e5ff, transparent);
+        box-shadow: 0 0 10px #00e5ff;
+    }
+    .pred-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 10%; right: 10%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #00e5ff55, transparent);
     }
     @keyframes fadeSlideIn {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(16px); }
         to   { opacity: 1; transform: translateY(0); }
     }
     .pred-label {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 3rem;
-        font-weight: 400;
+        font-family: 'Orbitron', monospace;
+        font-size: 2.8rem;
+        font-weight: 900;
         margin: 0;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
     }
     .pred-conf {
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.9rem;
-        color: #555555;
-        margin-top: 4px;
-        letter-spacing: 0.06em;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1rem;
+        color: #00e5ff;
+        margin-top: 10px;
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 10px #00e5ff88;
     }
 
     /* ── Probability bars ── */
     .prob-bar-container {
-        background: #111111;
-        border: 3px solid #333333;
-        border-radius: 0;
-        padding: 18px 22px;
-        margin: 8px 0;
+        background: #060a14;
+        border-radius: 12px;
+        padding: 20px 24px;
+        border: 1px solid #00e5ff22;
+        margin: 10px 0;
+        box-shadow: 0 0 20px #00e5ff08;
     }
     .prob-row {
         display: flex;
         align-items: center;
         margin: 10px 0;
-        gap: 10px;
+        gap: 12px;
     }
     .prob-label {
         width: 120px;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.78rem;
-        color: #FFFFFF;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        font-size: 0.88rem;
+        color: #a8d8e8;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        font-family: 'Rajdhani', sans-serif;
     }
     .prob-track {
         flex: 1;
-        height: 14px;
-        background: #222222;
-        border-radius: 0;
+        height: 8px;
+        background: #0d1526;
+        border-radius: 4px;
         overflow: hidden;
-        border: 1px solid #333333;
+        border: 1px solid #00e5ff11;
     }
     .prob-fill {
         height: 100%;
-        border-radius: 0;
-        transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 4px;
+        transition: width 0.7s ease;
+        box-shadow: 0 0 8px currentColor;
     }
     .prob-val {
-        width: 52px;
+        width: 50px;
         text-align: right;
-        font-size: 0.82rem;
-        color: #555555;
-        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.85rem;
+        color: #00e5ff;
+        font-family: 'Orbitron', monospace;
+        font-weight: 600;
     }
 
     /* ── Section header ── */
     .section-header {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 1rem;
-        letter-spacing: 0.12em;
+        font-family: 'Orbitron', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.3em;
         text-transform: uppercase;
-        color: #555555;
-        margin-bottom: 10px;
-        border-bottom: 2px solid #222222;
-        padding-bottom: 4px;
+        color: #1a6a7a;
+        margin-bottom: 14px;
+        border-bottom: 1px solid #00e5ff22;
+        padding-bottom: 6px;
     }
 
     /* ── Batch result card ── */
     .batch-card {
-        background: #111111;
-        border: 2px solid #333333;
-        border-radius: 0;
-        padding: 14px 12px;
+        background: #060a14;
+        border: 1px solid #00e5ff22;
+        border-radius: 10px;
+        padding: 14px 16px;
         text-align: center;
-        transition: border-color 0.15s ease, transform 0.15s ease;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .batch-card:hover {
-        transform: translate(-2px, -2px);
-        border-color: #FFFFFF;
-        box-shadow: 4px 4px 0 #FFFFFF;
+        transform: translateY(-4px);
+        border-color: #00e5ff;
+        box-shadow: 0 0 20px #00e5ff33;
     }
     .batch-card-icon { font-size: 2rem; margin-bottom: 6px; }
     .batch-card-label {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 1rem;
+        font-family: 'Orbitron', monospace;
+        font-size: 0.78rem;
+        font-weight: 700;
         letter-spacing: 0.08em;
     }
     .batch-card-conf {
-        font-family: 'IBM Plex Mono', monospace;
         font-size: 0.75rem;
-        color: #555555;
-        margin-top: 2px;
+        color: #1a6a7a;
+        margin-top: 3px;
+        letter-spacing: 0.06em;
     }
     .batch-card-filename {
         font-size: 0.65rem;
-        color: #333333;
-        margin-top: 4px;
-        font-family: 'IBM Plex Mono', monospace;
+        color: #0d2a30;
+        margin-top: 5px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -211,117 +256,153 @@ st.markdown("""
 
     /* ── Summary stat box ── */
     .stat-box {
-        background: #111111;
-        border: 2px solid #333333;
-        border-radius: 0;
-        padding: 16px 20px;
+        background: #060a14;
+        border: 1px solid #00e5ff22;
+        border-radius: 10px;
+        padding: 18px 20px;
         text-align: center;
-        transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
     }
-    .stat-box:hover {
-        border-color: #FFFFFF;
-        box-shadow: 4px 4px 0 #FFFFFF;
-        transform: translate(-2px, -2px);
+    .stat-box:hover { box-shadow: 0 0 20px #00e5ff22; border-color: #00e5ff55; }
+    .stat-box::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 20%; right: 20%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #00e5ff44, transparent);
     }
     .stat-number {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 2.6rem;
-        font-weight: 400;
+        font-family: 'Orbitron', monospace;
+        font-size: 1.8rem;
+        font-weight: 700;
         line-height: 1;
         letter-spacing: 0.04em;
     }
     .stat-label {
-        font-family: 'IBM Plex Mono', monospace;
         font-size: 0.65rem;
-        color: #555555;
-        letter-spacing: 0.12em;
+        color: #1a6a7a;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
-        margin-top: 4px;
+        margin-top: 6px;
+        font-family: 'Rajdhani', sans-serif;
     }
 
     /* ── Upload area ── */
     div[data-testid="stFileUploader"] {
-        background: #111111;
-        border: 2px dashed #333333;
-        border-radius: 0;
+        background: #060a14;
+        border: 1px dashed #00e5ff33;
+        border-radius: 12px;
         padding: 10px;
-        transition: border-color 0.2s;
-    }
-    div[data-testid="stFileUploader"]:hover {
-        border-color: #FFFFFF;
     }
 
-    /* ── Dataset sample card ── */
+    /* ── Dataset card ── */
     .ds-card {
-        background: #111111;
-        border: 2px solid #333333;
-        border-radius: 0;
+        background: #060a14;
+        border: 1px solid #00e5ff22;
+        border-radius: 10px;
         overflow: hidden;
-        transition: transform 0.15s ease, border-color 0.15s, box-shadow 0.15s;
+        transition: transform 0.2s ease, border-color 0.2s ease;
     }
-    .ds-card:hover {
-        transform: translate(-2px, -2px);
-        border-color: #FFFFFF;
-        box-shadow: 4px 4px 0 #FFFFFF;
-    }
+    .ds-card:hover { transform: translateY(-3px); border-color: #00e5ff; box-shadow: 0 0 16px #00e5ff22; }
     .ds-card-label {
         padding: 8px 10px;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.06em;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: #a8d8e8;
     }
     .ds-badge {
         display: inline-block;
-        padding: 3px 8px;
-        border-radius: 0;
-        font-size: 0.68rem;
-        font-family: 'IBM Plex Mono', monospace;
-        font-weight: 700;
-        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.65rem;
+        font-family: 'Orbitron', monospace;
+        font-weight: 600;
+        letter-spacing: 0.06em;
     }
 
     /* ── Tech chip ── */
     .tech-chip {
-        background: #111111;
-        border: 2px solid #333333;
-        border-radius: 0;
+        background: #060a14;
+        border: 1px solid #00e5ff22;
+        border-radius: 10px;
         padding: 16px;
         text-align: center;
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 1rem;
+        font-family: 'Orbitron', monospace;
+        font-size: 0.72rem;
+        color: #a8d8e8;
         letter-spacing: 0.1em;
-        color: #FFFFFF;
-        transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+        transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .tech-chip:hover {
-        background: #FFFFFF;
-        color: #0A0A0A;
-        box-shadow: 4px 4px 0 #FF3300;
-        transform: translate(-2px, -2px);
+    .tech-chip:hover { border-color: #00e5ff; box-shadow: 0 0 16px #00e5ff22; }
+
+    /* ── Buttons ── */
+    .stDownloadButton button, .stButton button {
+        background: transparent !important;
+        border: 1px solid #00e5ff !important;
+        color: #00e5ff !important;
+        border-radius: 6px !important;
+        font-family: 'Orbitron', monospace !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 0.14em !important;
+        text-transform: uppercase !important;
+        transition: background 0.2s, box-shadow 0.2s !important;
+        box-shadow: 0 0 8px #00e5ff22 !important;
+    }
+    .stDownloadButton button:hover, .stButton button:hover {
+        background: #00e5ff12 !important;
+        box-shadow: 0 0 20px #00e5ff44 !important;
     }
 
-    /* ── Sidebar ── */
-    section[data-testid="stSidebar"] {
-        background: #080808 !important;
-        border-right: 3px solid #222222;
+    /* ── Dataframe ── */
+    [data-testid="stDataFrame"] {
+        border: 1px solid #00e5ff22 !important;
+        border-radius: 10px !important;
     }
 
-    /* ── HR ── */
-    hr { border-color: #222222 !important; border-width: 2px !important; }
+    /* ── Alerts ── */
+    [data-testid="stAlert"] {
+        background: #060a14 !important;
+        border: 1px solid #00e5ff44 !important;
+        border-radius: 10px !important;
+        color: #a8d8e8 !important;
+    }
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; background: #0A0A0A; }
-    ::-webkit-scrollbar-thumb { background: #333333; border-radius: 0; }
-    ::-webkit-scrollbar-thumb:hover { background: #FFFFFF; }
+    /* ── Scanline overlay for cyberpunk feel ── */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0,229,255,0.015) 2px,
+            rgba(0,229,255,0.015) 4px
+        );
+        pointer-events: none;
+        z-index: 9999;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("<p style='font-family:Bebas Neue,sans-serif;font-size:1.6rem;letter-spacing:0.1em;color:#FFFFFF;margin-bottom:0;line-height:1;'>VEHICLE</p><p style='font-family:IBM Plex Mono,monospace;font-size:0.6rem;letter-spacing:0.2em;color:#555555;margin-top:2px;text-transform:uppercase;'>RECOGNITION SYSTEM</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align:center; padding: 14px 0 10px 0;'>
+        <p style='font-size:2rem; margin:0; filter: drop-shadow(0 0 8px #00e5ff);'>🚗</p>
+        <p style='font-family:"Orbitron",monospace; font-size:1rem; font-weight:700;
+                  color:#00e5ff; letter-spacing:0.14em; margin:8px 0 0 0;
+                  text-shadow: 0 0 12px #00e5ff88;'>VEHICLE AI</p>
+        <p style='font-size:0.55rem; letter-spacing:0.24em; color:#1a6a7a;
+                  text-transform:uppercase; margin:4px 0 0 0;'>Recognition System</p>
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown("---")
     mode = st.radio(
         "Mode",
@@ -329,10 +410,11 @@ with st.sidebar:
         label_visibility="collapsed"
     )
     st.markdown("---")
-    st.markdown("<span style='font-family:IBM Plex Mono,monospace;font-size:0.65rem;color:#555555;text-transform:uppercase;letter-spacing:0.1em;'>MODEL:</span> <span style='color:#FF3300;font-family:IBM Plex Mono,monospace;font-size:0.75rem;'>YOLOv8s-cls</span>", unsafe_allow_html=True)
-    st.markdown("<span style='font-family:IBM Plex Mono,monospace;font-size:0.65rem;color:#555555;text-transform:uppercase;letter-spacing:0.1em;'>CLASSES:</span>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:0.55rem;letter-spacing:0.22em;color:#1a6a7a;text-transform:uppercase;margin-bottom:6px;font-family:Orbitron,monospace;'>Model</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#a8d8e8;font-size:0.85rem;margin:0;font-family:Rajdhani,sans-serif;'>YOLOv8s-cls</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:0.55rem;letter-spacing:0.22em;color:#1a6a7a;text-transform:uppercase;margin:12px 0 6px 0;font-family:Orbitron,monospace;'>Classes</p>", unsafe_allow_html=True)
     for cls in CLASSES:
-        st.markdown(f"&nbsp;&nbsp;{CLASS_ICONS[cls]} {cls}")
+        st.markdown(f"<p style='color:#a8d8e8;font-size:0.85rem;margin:3px 0;font-family:Rajdhani,sans-serif;'>{CLASS_ICONS[cls]} {cls}</p>", unsafe_allow_html=True)
     st.markdown("---")
     conf_threshold = st.slider("Confidence threshold", 0.0, 1.0, 0.0, 0.05)
 
@@ -350,7 +432,7 @@ def render_prob_bars(probs, classes):
     for idx in sorted_idx:
         cls = classes[idx]
         p = probs[idx]
-        color = CLASS_COLORS.get(cls, '#555555')
+        color = CLASS_COLORS.get(cls, '#7b84a8')
         icon = CLASS_ICONS.get(cls, '🚘')
         bars_html += f"""
         <div class="prob-row">
@@ -364,9 +446,20 @@ def render_prob_bars(probs, classes):
     return bars_html
 
 # ── Main title ─────────────────────────────────────────────────────────────────
-st.markdown("<h1 style='font-family:Bebas Neue,sans-serif;font-size:3rem;font-weight:400;color:#FFFFFF;letter-spacing:0.08em;margin-bottom:0;line-height:0.95;'>VEHICLE<br>RECOGNITION</h1>", unsafe_allow_html=True)
-st.markdown("<p style='font-family:IBM Plex Mono,monospace;color:#555555;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;margin-top:6px;'>YOLOv8 // BUS // CAR // MOTORCYCLE // TRUCK</p>", unsafe_allow_html=True)
-st.markdown("---")
+st.markdown("""
+<div style='margin-bottom:4px;'>
+    <h1 style='font-family:"Orbitron",monospace; font-size:2rem; font-weight:900;
+               color:#00e5ff; letter-spacing:0.1em; margin:0;
+               text-shadow: 0 0 20px #00e5ff66, 0 0 40px #00e5ff33;'>
+        VEHICLE RECOGNITION SYSTEM
+    </h1>
+</div>
+<p style='color:#1a6a7a; font-size:0.6rem; letter-spacing:0.26em; text-transform:uppercase;
+          margin:0 0 16px 0; font-family:"Orbitron",monospace;'>
+    YOLOV8 &nbsp;·&nbsp; BUS &nbsp;·&nbsp; CAR &nbsp;·&nbsp; MOTORCYCLE &nbsp;·&nbsp; TRUCK
+</p>
+""", unsafe_allow_html=True)
+st.markdown("<hr style='border-color:#00e5ff22; margin:0 0 24px 0;'>", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -376,37 +469,36 @@ if mode == "🏠 Home":
     # ── Hero ──────────────────────────────────────────────────────────────────
     st.markdown("""
     <div style="
-        background: #111111;
-        border: 3px solid #FFFFFF;
-        border-radius: 0;
-        padding: 52px 48px 44px;
-        text-align: left;
+        background: linear-gradient(145deg, #0d1526 0%, #060a14 60%, #0a1020 100%);
+        border: 1px solid #00e5ff33;
+        border-top: 2px solid #00e5ff;
+        border-radius: 16px;
+        padding: 56px 48px 48px;
+        text-align: center;
         margin-bottom: 28px;
         position: relative;
         overflow: hidden;
+        box-shadow: 0 0 60px #00e5ff0a, inset 0 0 80px #00000040;
     ">
-        <div style="position:absolute;top:12px;right:16px;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#333333;letter-spacing:0.15em;">VRS-001 // YOLOv8S</div>
-        <p style="font-size:3.5rem; margin:0 0 12px 0; line-height:1;">🚗</p>
-        <h1 style="
-            font-family:'Bebas Neue',sans-serif;
-            font-size:4rem;
-            font-weight:400;
-            color:#FFFFFF;
-            margin:0 0 4px 0;
-            letter-spacing:0.06em;
-            line-height:0.95;
-            text-transform:uppercase;
-        ">Vehicle<br>Recognition<br>System</h1>
-        <div style="width:80px;height:4px;background:#FF3300;margin:16px 0;"></div>
-        <p style="
-            color:#555555;
-            font-family:'IBM Plex Mono',monospace;
-            font-size:0.68rem;
-            letter-spacing:0.2em;
-            margin:0 0 20px 0;
-            text-transform:uppercase;
-        ">YOLOV8S-CLS // BUS // CAR // MOTORCYCLE // TRUCK</p>
-        <p style="color:#AAAAAA; font-family:'Space Grotesk',sans-serif; font-size:1rem; max-width:520px; margin:0; line-height:1.7;">
+        <div style="position:absolute;top:-80px;left:-80px;width:280px;height:280px;
+            background:radial-gradient(circle,#00e5ff0a 0%,transparent 70%);"></div>
+        <div style="position:absolute;bottom:-80px;right:-80px;width:280px;height:280px;
+            background:radial-gradient(circle,#7b2fff0a 0%,transparent 70%);"></div>
+        <p style="font-size:3.5rem;margin:0 0 16px 0;line-height:1;
+                  filter:drop-shadow(0 0 12px #00e5ff);">🚗</p>
+        <h1 style="font-family:'Orbitron',monospace;font-size:2.4rem;font-weight:900;
+                   color:#00e5ff;margin:0 0 8px 0;letter-spacing:0.1em;
+                   text-shadow:0 0 30px #00e5ff88, 0 0 60px #00e5ff33;">
+            VEHICLE RECOGNITION
+        </h1>
+        <p style="color:#1a6a7a;font-family:'Orbitron',monospace;font-size:0.58rem;
+                  letter-spacing:0.3em;text-transform:uppercase;margin:0 0 28px 0;">
+            YOLOV8S-CLS &nbsp;·&nbsp; BUS &nbsp;·&nbsp; CAR &nbsp;·&nbsp; MOTORCYCLE &nbsp;·&nbsp; TRUCK
+        </p>
+        <div style="width:80px;height:1px;background:linear-gradient(90deg,transparent,#00e5ff,transparent);
+                    margin:0 auto 24px;box-shadow:0 0 8px #00e5ff;"></div>
+        <p style="color:#4a9aaa;font-size:0.95rem;max-width:520px;margin:0 auto;line-height:1.8;
+                  font-family:'Rajdhani',sans-serif;letter-spacing:0.04em;">
             A deep learning system that classifies vehicle images into four categories
             in real time using a fine-tuned YOLOv8s classification model.
         </p>
@@ -416,53 +508,50 @@ if mode == "🏠 Home":
     # ── Quick-stats row ───────────────────────────────────────────────────────
     qs = st.columns(4)
     quick_stats = [
-        ("8,863",  "Total Images",    "#FF3300"),
-        ("4",      "Classes",         "#FFEE00"),
-        ("224px",  "Input Size",      "#00FFAA"),
-        ("70/15/15", "Train/Val/Test", "#FF00AA"),
+        ("8,863",    "Total Images",   "#00e5ff"),
+        ("4",        "Classes",        "#7b2fff"),
+        ("224px",    "Input Size",     "#00ffaa"),
+        ("70/15/15", "Train/Val/Test", "#ff6ec7"),
     ]
     for col, (val, lbl, color) in zip(qs, quick_stats):
         col.markdown(f"""
-        <div class="stat-box" style="border-color:{color}44;">
-            <div class="stat-number" style="color:{color}; font-size:1.6rem;">{val}</div>
+        <div class="stat-box" style="border-color:{color}33;">
+            <div class="stat-number" style="color:{color}; text-shadow:0 0 12px {color}88;">{val}</div>
             <div class="stat-label">{lbl}</div>
         </div>""", unsafe_allow_html=True)
 
-    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
 
     # ── Feature cards ─────────────────────────────────────────────────────────
     st.markdown('<p class="section-header">What you can do</p>', unsafe_allow_html=True)
     fc = st.columns(4)
     features = [
-        ("📷", "Image",          "Upload a single image and get an instant classification with confidence scores and probability bars.", "#FF3300"),
-        ("🖼️", "Batch",          "Predict on multiple images at once. Export results to CSV and see class distribution at a glance.",   "#FFEE00"),
-        ("📈", "Training Curves","Upload your YOLOv8 results.csv to visualise loss, accuracy, and learning-rate curves over epochs.",    "#00FFAA"),
-        ("🗂️", "Dataset",        "Explore the dataset composition — class counts, train/val/test splits, and proportion charts.",        "#FF00AA"),
+        ("📷", "Image",           "Upload a single image and get an instant classification with confidence scores and probability bars."),
+        ("🖼️", "Batch",           "Predict on multiple images at once. Export results to CSV and see class distribution at a glance."),
+        ("📈", "Training Curves", "Upload your YOLOv8 results.csv to visualise loss, accuracy, and learning-rate curves over epochs."),
+        ("🗂️", "Dataset",         "Explore the dataset composition — class counts, train/val/test splits, and proportion charts."),
     ]
-    for col, (icon, title, desc, color) in zip(fc, features):
+    for col, (icon, title, desc) in zip(fc, features):
         col.markdown(f"""
         <div style="
-            background: #111111;
-            border: 2px solid #333333;
-            border-left: 6px solid {color};
-            border-radius: 0;
+            background: #060a14;
+            border: 1px solid #00e5ff22;
+            border-top: 2px solid #00e5ff;
+            border-radius: 12px;
             padding: 22px 18px;
             height: 100%;
-            transition: transform 0.15s, box-shadow 0.15s;
+            transition: box-shadow 0.2s, border-color 0.2s;
+            box-shadow: 0 0 0 transparent;
         ">
-            <p style="font-size:1.8rem; margin:0 0 10px 0;">{icon}</p>
-            <p style="
-                font-family:'Bebas Neue',sans-serif;
-                font-size:1.1rem;
-                color:{color};
-                margin:0 0 8px 0;
-                letter-spacing:0.08em;
-                text-transform:uppercase;
-            ">{title}</p>
-            <p style="color:#666666; font-family:'Space Grotesk',sans-serif; font-size:0.88rem; line-height:1.6; margin:0;">{desc}</p>
+            <p style="font-size:1.6rem; margin:0 0 12px 0; filter:drop-shadow(0 0 6px #00e5ff66);">{icon}</p>
+            <p style="font-family:'Orbitron',monospace;font-size:0.72rem;font-weight:700;
+                      color:#00e5ff;margin:0 0 8px 0;letter-spacing:0.1em;
+                      text-shadow:0 0 10px #00e5ff66;">{title}</p>
+            <p style="color:#2a7a8a; font-size:0.82rem; line-height:1.7; margin:0;
+                      font-family:'Rajdhani',sans-serif;">{desc}</p>
         </div>""", unsafe_allow_html=True)
 
-    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
 
     # ── Class showcase ────────────────────────────────────────────────────────
     st.markdown('<p class="section-header">Supported Classes</p>', unsafe_allow_html=True)
@@ -477,64 +566,42 @@ if mode == "🏠 Home":
         color = CLASS_COLORS[cls]
         icon  = CLASS_ICONS[cls]
         col.markdown(f"""
-        <div style="
-            background:#111111;
-            border:2px solid #333333;
-            border-top:6px solid {color};
-            border-radius:0;
-            padding:20px 16px;
-            text-align:center;
-        ">
-            <p style="font-size:2.4rem; margin:0 0 8px 0;">{icon}</p>
-            <p style="
-                font-family:'Bebas Neue',sans-serif;
-                font-size:1.2rem;
-                color:{color};
-                margin:0 0 8px 0;
-                letter-spacing:0.1em;
-                text-transform:uppercase;
-            ">{cls}</p>
-            <p style="color:#555555; font-family:'Space Grotesk',sans-serif; font-size:0.82rem; line-height:1.55; margin:0;">{class_descs[cls]}</p>
+        <div style="background:#060a14;border:1px solid #00e5ff22;border-radius:12px;
+                    padding:22px 16px;text-align:center;">
+            <p style="font-size:2.2rem;margin:0 0 10px 0;
+                      filter:drop-shadow(0 0 8px {color}88);">{icon}</p>
+            <p style="font-family:'Orbitron',monospace;font-size:0.78rem;font-weight:700;
+                      color:{color};margin:0 0 8px 0;letter-spacing:0.1em;
+                      text-shadow:0 0 10px {color}66;">{cls}</p>
+            <div style="width:30px;height:1px;background:#00e5ff22;margin:0 auto 10px;"></div>
+            <p style="color:#2a7a8a;font-size:0.75rem;line-height:1.6;margin:0;
+                      font-family:'Rajdhani',sans-serif;">{class_descs[cls]}</p>
         </div>""", unsafe_allow_html=True)
 
-    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
 
     # ── Pipeline ──────────────────────────────────────────────────────────────
     st.markdown('<p class="section-header">How it works</p>', unsafe_allow_html=True)
     steps = [
-        ("01", "Upload",     "Drop an image or batch of images into the app.",              "#FF3300"),
-        ("02", "Preprocess", "Frames are converted to grayscale and resized to 224×224.",   "#FFEE00"),
-        ("03", "Infer",      "YOLOv8s-cls runs a forward pass and outputs class logits.",   "#00FFAA"),
-        ("04", "Result",     "Softmax probabilities are ranked and displayed with labels.", "#FF00AA"),
+        ("01", "Upload",     "Drop an image or batch of images into the app."),
+        ("02", "Preprocess", "Converted to grayscale and resized to 224×224."),
+        ("03", "Infer",      "YOLOv8s-cls runs a forward pass and outputs class logits."),
+        ("04", "Result",     "Softmax probabilities are ranked and displayed with labels."),
     ]
     pipe_cols = st.columns(len(steps))
-    for col, (num, title, desc, color) in zip(pipe_cols, steps):
+    for col, (num, title, desc) in zip(pipe_cols, steps):
         col.markdown(f"""
-        <div style="
-            background:#111111;
-            border:2px solid #333333;
-            border-radius:0;
-            padding:18px 14px;
-            text-align:center;
-        ">
-            <p style="
-                font-family:'Bebas Neue',sans-serif;
-                font-size:3rem;
-                color:{color};
-                margin:0 0 4px 0;
-                line-height:1;
-                letter-spacing:0.04em;
-            ">{num}</p>
-            <p style="
-                font-family:'Bebas Neue',sans-serif;
-                font-size:1rem;
-                color:#FFFFFF;
-                margin:0 0 6px 0;
-                letter-spacing:0.1em;
-                text-transform:uppercase;
-            ">{title}</p>
-            <p style="color:#555555; font-family:'Space Grotesk',sans-serif; font-size:0.82rem; line-height:1.55; margin:0;">{desc}</p>
+        <div style="background:#060a14;border:1px solid #00e5ff22;border-radius:12px;
+                    padding:20px 14px;text-align:center;position:relative;">
+            <p style="font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;
+                      color:#00e5ff0f;margin:0 0 6px 0;line-height:1;">{num}</p>
+            <p style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;
+                      color:#00e5ff;margin:0 0 8px 0;letter-spacing:0.1em;
+                      text-shadow:0 0 10px #00e5ff66;">{title}</p>
+            <p style="color:#2a7a8a;font-size:0.75rem;line-height:1.6;margin:0;
+                      font-family:'Rajdhani',sans-serif;">{desc}</p>
         </div>""", unsafe_allow_html=True)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MODE: SINGLE IMAGE
@@ -572,7 +639,7 @@ elif mode == "📷 Image":
             for rank, (tc, ti) in enumerate(zip(t3cols, top3_idx)):
                 cls_name = classes[ti]
                 conf_val = float(probs[ti])
-                color = CLASS_COLORS.get(cls_name, '#555555')
+                color = CLASS_COLORS.get(cls_name, '#7b84a8')
                 icon = CLASS_ICONS.get(cls_name, '🚘')
                 medal = ["🥇", "🥈", "🥉"][rank]
                 tc.markdown(f"""
@@ -601,9 +668,9 @@ elif mode == "📷 Image":
             st.markdown(render_prob_bars(probs, classes), unsafe_allow_html=True)
     else:
         st.markdown("""
-        <div style="text-align:center; padding: 60px 20px; color:#333333;">
+        <div style="text-align:center; padding: 60px 20px; color:#3a4060;">
             <p style="font-size:3rem">📷</p>
-            <p style="font-family:'IBM Plex Mono',monospace; font-size:0.9rem; letter-spacing:0.1em;">UPLOAD AN IMAGE TO BEGIN</p>
+            <p style="font-family:'Orbitron',monospace; font-size:0.9rem; letter-spacing:0.1em;">UPLOAD AN IMAGE TO BEGIN</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -613,7 +680,7 @@ elif mode == "📷 Image":
 # ══════════════════════════════════════════════════════════════════════════════
 elif mode == "🖼️ Batch":
     st.markdown("### Batch Prediction")
-    st.markdown("<p style='color:#555555;'>Upload multiple vehicle images and get predictions for all at once.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#1a6a7a;'>Upload multiple vehicle images and get predictions for all at once.</p>", unsafe_allow_html=True)
 
     uploaded_files = st.file_uploader(
         "Upload images",
@@ -672,7 +739,7 @@ elif mode == "🖼️ Batch":
         for col, (val, lbl) in zip(sc, stats):
             col.markdown(f"""
             <div class="stat-box">
-                <div class="stat-number" style="color:#FFFFFF">{val}</div>
+                <div class="stat-number" style="color:#00e5ff">{val}</div>
                 <div class="stat-label">{lbl}</div>
             </div>""", unsafe_allow_html=True)
 
@@ -733,7 +800,7 @@ elif mode == "🖼️ Batch":
             for col, r in zip(cols, row_items):
                 cls = r["top_cls"]
                 conf = r["top_conf"]
-                color = CLASS_COLORS.get(cls, '#555555')
+                color = CLASS_COLORS.get(cls, '#7b84a8')
                 icon = CLASS_ICONS.get(cls, '🚘')
                 dim = (180, 180)
                 thumb = r["image"].copy()
@@ -748,9 +815,9 @@ elif mode == "🖼️ Batch":
                 </div>""", unsafe_allow_html=True)
     else:
         st.markdown("""
-        <div style="text-align:center; padding: 60px 20px; color:#333333;">
+        <div style="text-align:center; padding: 60px 20px; color:#3a4060;">
             <p style="font-size:3rem">🖼️</p>
-            <p style="font-family:'IBM Plex Mono',monospace; font-size:0.9rem; letter-spacing:0.1em;">UPLOAD MULTIPLE IMAGES TO BEGIN</p>
+            <p style="font-family:'Orbitron',monospace; font-size:0.9rem; letter-spacing:0.1em;">UPLOAD MULTIPLE IMAGES TO BEGIN</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -762,7 +829,7 @@ elif mode == "🖼️ Batch":
 elif mode == "📈 Training Curves":
     st.markdown("### Training Curves")
     st.markdown(
-        "<p style='color:#555555;'>Upload your <code>results.csv</code> exported by YOLOv8 training to visualise training dynamics.</p>",
+        "<p style='color:#1a6a7a;'>Upload your <code>results.csv</code> exported by YOLOv8 training to visualise training dynamics.</p>",
         unsafe_allow_html=True
     )
 
@@ -875,7 +942,7 @@ elif mode == "📈 Training Curves":
                 if lr_keys:
                     st.markdown('<p class="section-header">Learning Rate Schedule</p>', unsafe_allow_html=True)
                     fig, ax = plt.subplots(figsize=(8, 2.2))
-                    ax.plot(epochs, detected[lr_keys[0]], linewidth=1.6, color="#FF00AA")
+                    ax.plot(epochs, detected[lr_keys[0]], linewidth=1.6, color="#7b2fff")
                     ax.set_xlabel("Epoch")
                     ax.set_ylabel("LR")
                     ax.set_title("Learning Rate (pg0)")
@@ -903,7 +970,7 @@ elif mode == "📈 Training Curves":
                 for col, (k, v) in zip(s_cols * 10, summary.items()):
                     col.markdown(f"""
                     <div class="stat-box">
-                        <div class="stat-number" style="color:#FFFFFF;font-size:1.1rem;">{v}</div>
+                        <div class="stat-number" style="color:#00e5ff;font-size:1.1rem;">{v}</div>
                         <div class="stat-label">{k}</div>
                     </div>""", unsafe_allow_html=True)
 
@@ -917,16 +984,16 @@ elif mode == "📈 Training Curves":
     else:
         # ── Demo / instructions ────────────────────────────────────────────────
         st.markdown("""
-        <div style="background:#111111;border:1px solid #333333;border-radius:12px;padding:24px;margin-top:16px;">
-            <p style="font-family:'IBM Plex Mono',monospace;color:#555555;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;">Expected Columns</p>
-            <ul style="color:#FFFFFF;line-height:2;">
+        <div style="background:#1a1d2e;border:1px solid #2d3561;border-radius:12px;padding:24px;margin-top:16px;">
+            <p style="font-family:'Orbitron',monospace;color:#1a6a7a;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;">Expected Columns</p>
+            <ul style="color:#00e5ff;line-height:2;">
                 <li><code>epoch</code></li>
                 <li><code>train/box_loss</code>, <code>train/cls_loss</code></li>
                 <li><code>val/box_loss</code>, <code>val/cls_loss</code></li>
                 <li><code>metrics/accuracy_top1</code>, <code>metrics/accuracy_top5</code></li>
                 <li><code>lr/pg0</code></li>
             </ul>
-            <p style="color:#555555;font-size:0.85rem;">
+            <p style="color:#1a6a7a;font-size:0.85rem;">
                 YOLOv8 saves this file automatically to <code>runs/classify/train/results.csv</code>
                 after training completes.
             </p>
@@ -939,7 +1006,7 @@ elif mode == "📈 Training Curves":
 # ══════════════════════════════════════════════════════════════════════════════
 elif mode == "🗂️ Dataset":
     st.markdown("### Dataset Overview")
-    st.markdown("<p style='color:#555555;'>Class distribution across the training split (~4,081 images).</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#1a6a7a;'>Class distribution across the training split (~4,081 images).</p>", unsafe_allow_html=True)
     st.markdown("---")
 
     # ── Hardcoded train-split counts from the dataset ─────────────────────────
@@ -961,7 +1028,7 @@ elif mode == "🗂️ Dataset":
         (str(DATASET_COUNTS['Motorcycle']), "Motorcycle"),
         (str(DATASET_COUNTS['Truck']),      "Truck"),
     ]
-    stat_colors = ["#FFFFFF", CLASS_COLORS['Bus'], CLASS_COLORS['Car'], CLASS_COLORS['Motorcycle'], CLASS_COLORS['Truck']]
+    stat_colors = ["#00e5ff", CLASS_COLORS['Bus'], CLASS_COLORS['Car'], CLASS_COLORS['Motorcycle'], CLASS_COLORS['Truck']]
     for col, (val, lbl), color in zip(sc, summary_stats, stat_colors):
         col.markdown(f"""
         <div class="stat-box">
@@ -1028,9 +1095,9 @@ elif mode == "🗂️ Dataset":
 
     TOTAL_DATASET = 8863
     split_data = {
-        "Train": (0.70, "#FF3300"),
-        "Val":   (0.15, "#00FFAA"),
-        "Test":  (0.15, "#FF3300"),
+        "Train": (0.70, "#00e5ff"),
+        "Val":   (0.15, "#7b2fff"),
+        "Test":  (0.15, "#ff6ec7"),
     }
     sp_cols = st.columns(3)
     for col, (split_name, (ratio, color)) in zip(sp_cols, split_data.items()):
@@ -1051,7 +1118,7 @@ elif mode == "🗂️ Dataset":
     # legend
     legend_html = "<div style='display:flex;gap:20px;margin-top:8px;'>"
     for split_name, (ratio, color) in split_data.items():
-        legend_html += f"<span style='font-size:0.75rem;color:{color};font-family:IBM Plex Mono,monospace;'>■ {split_name} {int(ratio*100)}%</span>"
+        legend_html += f"<span style='font-size:0.75rem;color:{color};font-family:Orbitron,monospace;'>■ {split_name} {int(ratio*100)}%</span>"
     legend_html += "</div>"
     st.markdown(legend_html, unsafe_allow_html=True)
 
